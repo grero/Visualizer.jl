@@ -93,6 +93,16 @@ function plot!{T<:Real}(p::FramedPlot, X::Array{T,2},i::Integer)
     end
 end
 
+function plot!{T<:Real}(p::FramedPlot, X::Dict{Any, Array{T,1}})
+    keys = collect(keys(X))
+    if i > 0 && i <= length(keys) 
+        plot(p,X[keys[i]])
+        setattr(p.x2,"draw_axis",false)
+        setattr(p.y2,"draw_axis",false)
+        return p
+    end
+end
+
 function plottest(c,a)
     #test
     x = linspace(0.0,10.0,1001)
