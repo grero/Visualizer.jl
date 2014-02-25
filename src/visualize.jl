@@ -1,6 +1,7 @@
 using Tk
 using Winston
 using Spiketrains
+import Spiketrains.plot!
 
 type NavigationState
     state::Integer
@@ -79,6 +80,16 @@ function plottest(c,navstate::NavigationState,navctrls::NavigationControls,X,i::
         navstate.state = i
         navstate.p = p
         set_value(navctrls.state, string(i))
+    end
+end
+
+#convience function for plotting simple matrices
+function plot!{T<:Real}(p::FramedPlot, X::Array{T,2},i::Integer)
+    if i > 0 && i <= size(X,2)
+        plot(p, X[:,i])
+        setattr(p.x2,"draw_axis",false)
+        setattr(p.y2,"draw_axis",false)
+        return p
     end
 end
 
