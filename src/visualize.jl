@@ -6,6 +6,7 @@ import Spiketrains.plot!
 type NavigationState
     state::Integer
     p
+    overlay::Bool
 end
 
 type NavigationControls
@@ -14,24 +15,28 @@ end
 
 visualize(X,title::String) = visualize(X,800,600,title)
 visualize(X) = visualize(X,800,600,"Visualizer")
-function visualize(X,width::Integer, height::Integer,title::String)
+function visualize(X,width::Integer, height::Integer,title::String; overlay::Bool=false)
     #figure out what kind of plots we are creating
     m3 = methodswith(Table)
     if typeof(X) <: (Any...)
-        p = Table(1,length(X))
-        navstate = NavigationState(1, p)
-        for i=1:length(X)
-            if typeof(X[i]) <: Array
-                m1 = methodswith(typeof(X[i][1]))
-                if ~isempty(intersect(m1,m3))
-                    pp = Table(1,length(names(X[i][1]))-1)
-                    navstate.p[1,i] = pp
+        if overlay == false
+            p = Table(1,length(X))
+            navstate = NavigationState(1, p,overlay)
+            for i=1:length(X)
+                if typeof(X[i]) <: Array
+                    m1 = methodswith(typeof(X[i][1]))
+                    if ~isempty(intersect(m1,m3))
+                        pp = Table(1,length(names(X[i][1]))-1)
+                        navstate.p[1,i] = pp
+                    else
+                        navstate.p[1,i] = FramedPlot()
+                    end
                 else
                     navstate.p[1,i] = FramedPlot()
                 end
-            else
-                navstate.p[1,i] = FramedPlot()
             end
+        else
+            navstate = NavigationState(1,FramedPlot(),overlay)
         end
     else 
     #figure out whether we are using FramedPlot or Table; something of a hack
@@ -180,6 +185,14 @@ function plot!(p::Table, X::(Any...),i::Integer)
             p[1,j] = Table(p[1,j].rows, p[1,j].cols)
         end
         plot!(p[1,j],X[j],i)
+    end
+end
+
+function plot!(p::FramedPlot, X::(Any...), i::Integer)
+    plot!(p,X[1],i)
+    hold(true)
+    for j=2:length(X)
+        plot!(p,X[j],i)
     end
 end
 
