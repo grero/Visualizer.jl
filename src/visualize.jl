@@ -82,26 +82,10 @@ end
 
 function saveplot(navstate::NavigationState)
     cc = navstate.state
-    win = Toplevel()
-    f = Frame(win)
-    pack(f,expand=true,fill="both")
-    l = Label(f, "File name: ")
-    ee = Entry(f, width=15)
-    set_value(ee, "/tmp/cell$cc.pdf")
-    ok = Button(f, "OK")
-    cancel = Button(f, "Cancel")
-    grid(l,1,1)
-    grid(ee, 1,2, pady=5)
-    grid(cancel, 2,1)
-    grid(ok, 2,2)
-
-    function set_close!(navstate::NavigationState)
-        file(navstate.p,string(get_value(ee)),width=800,height=600)
-        destroy(win)
+    fname = GetSaveFile()
+    if !isempty(fname)
+        file(navstate.p,fname,width=800,height=600)
     end
-    bind(ee, "<Return>", path->set_close!(navstate))
-    bind(ok,"command", path->set_close!(navstate))
-    bind(cancel, "command", path->destroy(win))
 end
 
 function updatef(navstate::NavigationState, navctrls::NavigationControls,c,X)
