@@ -45,12 +45,12 @@ function visualize(X,width::Integer, height::Integer,title::String; overlay::Boo
             if ~isempty(intersect(m1,m3))
                 #we found a method taking Table, so use table
                 p = Table(1,length(names(X[1]))-1)
-                navstate = NavigationState(1, p)
+                navstate = NavigationState(1, p,overlay)
             else
-                navstate = NavigationState(1, FramedPlot())
+                navstate = NavigationState(1, FramedPlot(),overlay)
             end
         else
-            navstate = NavigationState(1, FramedPlot())
+            navstate = NavigationState(1, FramedPlot(),overlay)
         end
     end
 
