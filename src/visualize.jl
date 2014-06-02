@@ -80,6 +80,36 @@ function visualize(X,width::Integer, height::Integer,title::String; overlay::Boo
     plottest(c,navstate,navctrls, X,navstate.state) 
 end
 
+visualize(X,width::Integer, height::Integer,title::String, plotfunc::Function) = visualize(X,width,height,title,plotfunc,Winston.FramedPlot())
+
+function visualize{T<:Winston.PlotContainer}(X,width::Integer, height::Integer,title::String, plotfunc::Function,p::T)
+    navstate = NavigationState(1, p,false)
+    win = Toplevel(title,width,height)
+    fwin = Frame(win)
+    pack(fwin, expand=true, fill="both")
+    c = Canvas(fwin, width,height)
+    grid(c,1,1, sticky="nsew")
+    fctrls = Frame(fwin)
+    grid(fctrls,2,1,sticky="sw",padx=5,pady=5)
+    grid_columnconfigure(fwin,1,weight=1)
+    grid_rowconfigure(fwin,1,weight=1)
+    prev = Button(fctrls,"Prev")
+    grid(prev,1,1)
+    en = Entry(fctrls, width=5)
+    navctrls = NavigationControls(en)
+    grid(en,1,2)
+    set_value(en,string(navstate.state))
+    nxt = Button(fctrls,"Next")
+    grid(nxt,1,3)
+    sav = Button(fctrls,"Save")
+    grid(sav,1,4)
+    bind(prev, "command", path -> plottest(c,navstate,navctrls,X,navstate.state-1,plotfunc))
+    bind(nxt, "command", path -> plottest(c,navstate, navctrls, X,navstate.state+1,plotfunc))
+    bind(en, "<Return>", path -> updatef(navstate,navctrls,c,X,plotfunc))
+    bind(sav, "command", path -> saveplot(navstate))
+    plottest(c,navstate,navctrls, X,navstate.state,plotfunc) 
+end
+
 function saveplot(navstate::NavigationState)
     cc = navstate.state
     fname = GetSaveFile()
@@ -91,6 +121,31 @@ end
 function updatef(navstate::NavigationState, navctrls::NavigationControls,c,X)
     navstate.state = int(get_value(navctrls.state))
     plottest(c,navstate,navctrls,X,navstate.state)
+end
+
+function updatef(navstate::NavigationState, navctrls::NavigationControls,c,X,plotfunc::Function)
+    navstate.state = int(get_value(navctrls.state))
+    plottest(c,navstate,navctrls,X,navstate.state,plotfunc)
+end
+
+function plottest(c,navstate::NavigationState,navctrls::NavigationControls,X,i::Integer,plotfunc::Function)
+    p = navstate.p
+    if typeof(p) <: FramedPlot
+        p.content1 = Winston.PlotComposite()
+    elseif typeof(p) <: Table
+        for cc=1:p.cols
+            for rr=1:p.rows
+                p[rr,cc].content1 = Winston.PlotComposite()
+            end
+        end
+    end
+    plotfunc(p,X,i)
+    Winston.display(c,p)
+    reveal(c)
+    Tk.update()
+    navstate.state = i
+    #navstate.p = p
+    set_value(navctrls.state, string(i))
 end
 
 function plottest(c,navstate::NavigationState,navctrls::NavigationControls,X,i::Integer)
