@@ -1,7 +1,5 @@
 using Tk
 using Winston
-using Spiketrains
-import Spiketrains.plot!
 
 type NavigationState
     state::Integer
