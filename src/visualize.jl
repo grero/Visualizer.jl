@@ -133,7 +133,9 @@ function plottest(c,navstate::NavigationState,navctrls::NavigationControls,X,i::
     elseif typeof(p) <: Table
         for cc=1:p.cols
             for rr=1:p.rows
-                p[rr,cc].content1 = Winston.PlotComposite()
+				if isdefined(p,sub2ind((p.rows,p.cols),rr,cc))
+					p[rr,cc].content1 = Winston.PlotComposite()
+				end
             end
         end
     end
