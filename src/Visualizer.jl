@@ -1,3 +1,5 @@
 module Visualizer
-    include("visualize.jl")
+using Docile	
+@docstrings
+include("visualize.jl")
 end

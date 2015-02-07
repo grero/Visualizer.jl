@@ -80,6 +80,7 @@ end
 
 visualize(X,width::Integer, height::Integer,title::String, plotfunc::Function) = visualize(X,width,height,title,plotfunc,Winston.FramedPlot())
 
+@doc meta("Pan through the elements of the iterable X. `plotfunc` should accept arguments (Winston.PlotContainer, X, Integer)") ->
 function visualize{T<:Winston.PlotContainer}(X,width::Integer, height::Integer,title::String, plotfunc::Function,p::T)
     navstate = NavigationState(1, p,false)
     win = Toplevel(title,width,height)
