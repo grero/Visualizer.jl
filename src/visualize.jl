@@ -106,6 +106,9 @@ function visualize{T<:Winston.PlotContainer}(X,width::Integer, height::Integer,t
     bind(nxt, "command", path -> plottest(c,navstate, navctrls, X,navstate.state+1,plotfunc))
     bind(en, "<Return>", path -> updatef(navstate,navctrls,c,X,plotfunc))
     bind(sav, "command", path -> saveplot(navstate))
+	#keyboard events
+	bind(win, "<Left>", path -> plottest(c,navstate,navctrls,X,navstate.state-1,plotfunc))
+	bind(win, "<Right>", path -> plottest(c,navstate,navctrls,X,navstate.state+1,plotfunc))
     plottest(c,navstate,navctrls, X,navstate.state,plotfunc) 
 end
 
