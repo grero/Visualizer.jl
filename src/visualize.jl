@@ -16,7 +16,7 @@ visualize(X) = visualize(X,800,600,"Visualizer")
 function visualize(X,width::Integer, height::Integer,title::String; overlay::Bool=false)
     #figure out what kind of plots we are creating
     m3 = methodswith(Table)
-    if typeof(X) <: (Any...)
+    if typeof(X) <: Array{Any,1}
         if overlay == false
             p = Table(1,length(X))
             navstate = NavigationState(1, p,overlay)
@@ -218,7 +218,7 @@ function plot!(p::FramedPlot, X::Dict{Any, Any},i::Integer)
     end
 end
 
-function plot!(p::Table, X::(Any...),i::Integer)
+function plot!(p::Table, X::Array{Any,1},i::Integer)
     for j=1:length(X)
         #p[1,j] = FramedPlot()
         #HACK: ideally I want to just call 'clear(p)' here, but that doesn't seem to work
@@ -231,7 +231,7 @@ function plot!(p::Table, X::(Any...),i::Integer)
     end
 end
 
-function plot!(p::FramedPlot, X::(Any...), i::Integer)
+function plot!(p::FramedPlot, X::Array{Any,1}, i::Integer)
     plot!(p,X[1],i)
     hold(true)
     for j=2:length(X)
