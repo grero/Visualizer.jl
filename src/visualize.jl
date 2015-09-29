@@ -116,7 +116,7 @@ function saveplot(navstate::NavigationState)
     cc = navstate.state
     fname = GetSaveFile()
     if !isempty(fname)
-        file(navstate.p,fname,width=800,height=600)
+        Winston.savefig(navstate.p,fname,width=800,height=600)
     end
 end
 
